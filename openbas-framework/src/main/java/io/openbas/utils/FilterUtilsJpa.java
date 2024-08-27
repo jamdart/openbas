@@ -96,12 +96,12 @@ public class FilterUtilsJpa {
   @SuppressWarnings("unchecked")
   public static <T> Specification<T> computeFilterFromSpecificPath(
       @Nullable final Filter filter,
-      @NotBlank final String jsonPath) {
+      @NotBlank final PropertyDescriptor propertyDescriptor) {
     if (filter == null) {
       return (Specification<T>) EMPTY_SPECIFICATION;
     }
 
-    String[] jsonPaths = jsonPath.split("\\.");
+    String[] jsonPaths = propertyDescriptor.getJsonPath().split("\\.");
     return (root, query, cb) -> {
       if (jsonPaths.length > 0) {
         Join<Object, Object> paths = root.join(jsonPaths[0], JoinType.LEFT);
@@ -109,7 +109,7 @@ public class FilterUtilsJpa {
           paths = paths.join(jsonPaths[i], JoinType.LEFT);
         }
         Path<Object> finalPath = paths.get(jsonPaths[jsonPaths.length - 1]);
-        return toPredicate(finalPath, filter, cb, String.class);
+        return toPredicate(finalPath, filter, cb, propertyDescriptor.getClazz());
       }
       throw new IllegalArgumentException();
     };

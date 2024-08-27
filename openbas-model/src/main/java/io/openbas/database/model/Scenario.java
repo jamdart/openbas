@@ -42,6 +42,17 @@ import static lombok.AccessLevel.NONE;
 })
 public class Scenario implements Base {
 
+  public enum SEVERITY {
+    @JsonProperty("low")
+    low,
+    @JsonProperty("medium")
+    medium,
+    @JsonProperty("high")
+    high,
+    @JsonProperty("critical")
+    critical,
+  }
+
     @Id
     @UuidGenerator
     @Column(name = "scenario_id")
@@ -73,8 +84,10 @@ public class Scenario implements Base {
     private String mainFocus;
 
     @Column(name = "scenario_severity")
+  @Enumerated(EnumType.STRING)
     @JsonProperty("scenario_severity")
-    private String severity;
+  @Queryable(filterable = true)
+  private SEVERITY severity;
 
     @Column(name = "scenario_external_reference")
     @JsonProperty("scenario_external_reference")
@@ -88,6 +101,7 @@ public class Scenario implements Base {
 
     @Column(name = "scenario_recurrence")
     @JsonProperty("scenario_recurrence")
+  @Queryable(filterable = true)
     private String recurrence;
 
     @Column(name = "scenario_recurrence_start")
@@ -130,6 +144,7 @@ public class Scenario implements Base {
     @Column(name = "scenario_updated_at")
     @JsonProperty("scenario_updated_at")
     @NotNull
+  @Queryable(filterable = true)
     private Instant updatedAt = now();
 
     // -- RELATION --

@@ -7,14 +7,14 @@ import type { InjectResultDTO, SearchPaginationInput } from '../../../utils/api-
 import AtomicTestingResult from './atomic_testing/AtomicTestingResult';
 import ItemTargets from '../../../components/ItemTargets';
 import Empty from '../../../components/Empty';
-import { initSorting, type Page } from '../../../components/common/queryable/Page';
-import PaginationComponent from '../../../components/common/pagination/PaginationComponent';
-import SortHeadersComponent from '../../../components/common/pagination/SortHeadersComponent';
+import { type Page } from '../../../components/common/queryable/Page';
 import InjectorContract from '../common/injects/InjectorContract';
 import ItemStatus from '../../../components/ItemStatus';
 import AtomicTestingPopover from './atomic_testing/AtomicTestingPopover';
 import { isNotEmptyField } from '../../../utils/utils';
-import { buildSearchPagination } from '../../../components/common/queryable/QueryableUtils';
+import { QueryableHelpers } from '../../../components/common/queryable/QueryableHelpers';
+import PaginationComponentV2 from '../../../components/common/queryable/pagination/PaginationComponentV2';
+import SortHeadersComponentV2 from '../../../components/common/queryable/sort/SortHeadersComponentV2';
 
 const useStyles = makeStyles(() => ({
   bodyItems: {
@@ -68,11 +68,17 @@ const inlineStyles: Record<string, CSSProperties> = {
 interface Props {
   fetchInjects: (input: SearchPaginationInput) => Promise<{ data: Page<InjectResultDTO> }>;
   goTo: (injectId: string) => string;
+  queryableHelpers: QueryableHelpers;
+  searchPaginationInput: SearchPaginationInput;
+  availableFilterNames?: string[];
 }
 
 const InjectList: FunctionComponent<Props> = ({
   fetchInjects,
   goTo,
+  queryableHelpers,
+  searchPaginationInput,
+  availableFilterNames = [],
 }) => {
   // Standard hooks
   const classes = useStyles();
@@ -80,9 +86,6 @@ const InjectList: FunctionComponent<Props> = ({
 
   // Filter and sort hook
   const [injects, setInjects] = useState<InjectResultDTO[]>([]);
-  const [searchPaginationInput, setSearchPaginationInput] = useState<SearchPaginationInput>(buildSearchPagination({
-    sorts: initSorting('inject_updated_at', 'DESC'),
-  }));
 
   // Headers
   const headers = useMemo(() => [
@@ -147,10 +150,13 @@ const InjectList: FunctionComponent<Props> = ({
 
   return (
     <>
-      <PaginationComponent
+      <PaginationComponentV2
         fetch={fetchInjects}
         searchPaginationInput={searchPaginationInput}
         setContent={setInjects}
+        entityPrefix="inject"
+        availableFilterNames={availableFilterNames}
+        queryableHelpers={queryableHelpers}
       />
       <List>
         <ListItem
@@ -162,12 +168,10 @@ const InjectList: FunctionComponent<Props> = ({
           <ListItemIcon />
           <ListItemText
             primary={
-              <SortHeadersComponent
+              <SortHeadersComponentV2
                 headers={headers}
                 inlineStylesHeaders={inlineStyles}
-                searchPaginationInput={searchPaginationInput}
-                setSearchPaginationInput={setSearchPaginationInput}
-                defaultSortAsc
+                sortHelpers={queryableHelpers.sortHelpers}
               />
             }
           />

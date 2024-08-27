@@ -52,7 +52,7 @@ public class Inject implements Base, Injection {
   private String id;
 
   @Getter
-    @Queryable(searchable = true, sortable = true)
+  @Queryable(filterable = true, searchable = true, sortable = true)
   @Column(name = "inject_title")
   @JsonProperty("inject_title")
   @NotBlank
@@ -92,7 +92,7 @@ public class Inject implements Base, Injection {
 
   @Getter
   @Column(name = "inject_updated_at")
-  @Queryable(sortable = true)
+  @Queryable(filterable = true, sortable = true)
   @JsonProperty("inject_updated_at")
   @NotNull
   private Instant updatedAt = now();
@@ -145,7 +145,7 @@ public class Inject implements Base, Injection {
   // CascadeType.ALL is required here because inject status are embedded
   @OneToOne(mappedBy = "inject", cascade = CascadeType.ALL, orphanRemoval = true)
   @JsonProperty("inject_status")
-  @Queryable(sortable = true, property = "name")
+  @Queryable(filterable = true, sortable = true, property = "name")
   private InjectStatus status;
 
   // Status after testing emails and sms
@@ -161,6 +161,7 @@ public class Inject implements Base, Injection {
       inverseJoinColumns = @JoinColumn(name = "tag_id"))
   @JsonSerialize(using = MultiIdSetDeserializer.class)
   @JsonProperty("inject_tags")
+  @Queryable(filterable = true, dynamicValues = true)
   private Set<Tag> tags = new HashSet<>();
 
   @Getter

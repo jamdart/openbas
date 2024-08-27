@@ -25,6 +25,8 @@ import ScenarioPopover from './scenario/ScenarioPopover';
 import { fetchStatistics } from '../../../actions/Application';
 import SortHeadersComponentV2 from '../../../components/common/queryable/sort/SortHeadersComponentV2';
 import PaginationComponentV2 from '../../../components/common/queryable/pagination/PaginationComponentV2';
+import type { FilterGroup } from '../../../utils/api-types';
+import { buildEmptyFilter } from '../../../components/common/queryable/filter/FilterUtils';
 
 const useStyles = makeStyles(() => ({
   itemHead: {
@@ -127,10 +129,10 @@ const Scenarios = () => {
       value: (scenario: ScenarioStore) => {
         const platforms = scenario.scenario_platforms ?? [];
         if (platforms.length === 0) {
-          return <PlatformIcon platform={t('No inject in this scenario')} tooltip={true} width={25} />;
+          return <PlatformIcon platform={t('No inject in this scenario')} tooltip width={25} />;
         }
         return platforms.map(
-          (platform: string) => <PlatformIcon key={platform} platform={platform} tooltip={true} width={20} marginRight={10} />,
+          (platform: string) => <PlatformIcon key={platform} platform={platform} tooltip width={20} marginRight={10} />,
         );
       },
     },
@@ -150,8 +152,30 @@ const Scenarios = () => {
 
   const [scenarios, setScenarios] = useState<ScenarioStore[]>([]);
 
+  // Filters
+  const availableFilterNames = [
+    'scenario_category',
+    'scenario_kill_chain_phases',
+    'scenario_name',
+    'scenario_platforms',
+    'scenario_recurrence',
+    'scenario_severity',
+    'scenario_tags',
+    'scenario_updated_at',
+  ];
+
+  const quickFilter: FilterGroup = {
+    mode: 'and',
+    filters: [
+      buildEmptyFilter('scenario_category', 'contains'),
+      buildEmptyFilter('scenario_kill_chain_phases', 'contains'),
+      buildEmptyFilter('scenario_tags', 'contains'),
+    ],
+  };
+
   const { queryableHelpers, searchPaginationInput } = useQueryable('scenarios', buildSearchPagination({
     sorts: initSorting('scenario_updated_at', 'DESC'),
+    filterGroup: quickFilter,
   }));
 
   // Export
@@ -178,7 +202,7 @@ const Scenarios = () => {
         searchPaginationInput={searchPaginationInput}
         setContent={setScenarios}
         entityPrefix="scenario"
-        availableFilterNames={['scenario_category', 'scenario_kill_chain_phases', 'scenario_tags', 'scenario_name']}
+        availableFilterNames={availableFilterNames}
         queryableHelpers={queryableHelpers}
         exportProps={exportProps}
       >

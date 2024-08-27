@@ -143,7 +143,7 @@ const PaginationComponentV2 = <T extends object>({
               </Drawer>
             </>
           )}
-          {queryableHelpers.filterHelpers && availableFilterNames?.includes('injector_contract_players') && (
+          {availableFilterNames?.includes('injector_contract_players') && (
             <div style={{ marginLeft: 10 }}>
               <InjectorContractSwitchFilter filterHelpers={queryableHelpers.filterHelpers} filterGroup={searchPaginationInput.filterGroup}/>
             </div>

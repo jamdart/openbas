@@ -39,6 +39,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
 import static io.openbas.config.SessionHelper.currentUser;
@@ -46,6 +47,7 @@ import static io.openbas.database.criteria.GenericCriteria.countQuery;
 import static io.openbas.helper.StreamHelper.fromIterable;
 import static io.openbas.helper.StreamHelper.iterableToSet;
 import static io.openbas.utils.AtomicTestingUtils.*;
+import static io.openbas.utils.InjectUtils.handleDeepFilter;
 import static io.openbas.utils.JpaUtils.createJoinArrayAggOnId;
 import static io.openbas.utils.JpaUtils.createLeftJoin;
 import static io.openbas.utils.StringUtils.duplicateString;
@@ -266,7 +268,9 @@ public class AtomicTestingService {
 
     // -- PAGINATION --
 
-    public Page<AtomicTestingOutput> findAllAtomicTestings(SearchPaginationInput searchPaginationInput) {
+    public Page<AtomicTestingOutput> findAllAtomicTestings(@NotNull final SearchPaginationInput searchPaginationInput) {
+        Function<Specification<Inject>, Specification<Inject>> finalSpecification = handleDeepFilter(searchPaginationInput);
+
         Specification<Inject> customSpec = Specification.where((root, query, cb) -> {
             Predicate predicate = cb.conjunction();
             predicate = cb.and(predicate, cb.isNull(root.get("scenario")));
@@ -275,7 +279,7 @@ public class AtomicTestingService {
         });
         return buildPaginationCriteriaBuilder(
                 (Specification<Inject> specification, Pageable pageable) -> this.atomicTestings(
-                        specification.and(customSpec), pageable),
+                    finalSpecification.apply(specification.and(customSpec)), pageable),
                 searchPaginationInput,
                 Inject.class
         );

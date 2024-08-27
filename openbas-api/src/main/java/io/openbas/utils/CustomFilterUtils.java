@@ -23,11 +23,10 @@ public class CustomFilterUtils {
   /**
    * Manage filters that are not directly managed by the generic mechanics
    */
-  public static <T extends Base> UnaryOperator<Specification<T>> handleCustomFilter(
+  public static <T extends Base> UnaryOperator<Specification<T>> handleDeepFilter(
       @NotNull final SearchPaginationInput searchPaginationInput,
       @NotBlank final String customFilterKey,
-      @NotNull final Map<String, String> correspondenceMap) {
-    UnaryOperator<Specification<T>> finalSpecification;
+      @NotNull final Map<String, PropertyDescriptor> correspondenceMap) {
     // Existence of the filter
     Optional<Filters.Filter> killChainPhaseFilterOpt = ofNullable(searchPaginationInput.getFilterGroup())
         .flatMap(f -> f.findByKey(customFilterKey));
@@ -39,17 +38,22 @@ public class CustomFilterUtils {
           killChainPhaseFilterOpt.get(), correspondenceMap.get(customFilterKey)
       );
       // Final specification
-      if (Filters.FilterMode.and.equals(searchPaginationInput.getFilterGroup().getMode())) {
-        finalSpecification = customSpecification::and;
-      } else if (Filters.FilterMode.or.equals(searchPaginationInput.getFilterGroup().getMode())) {
-        finalSpecification = customSpecification::or;
-      } else {
-        finalSpecification = (Specification<T> specification) -> specification;
-      }
+      return computeMode(searchPaginationInput, customSpecification);
     } else {
-      finalSpecification = (Specification<T> specification) -> specification;
+      return (Specification<T> specification) -> specification;
     }
-    return finalSpecification;
+  }
+
+  public static <T extends Base> UnaryOperator<Specification<T>> computeMode(
+      @NotNull final SearchPaginationInput searchPaginationInput,
+      Specification<T> customSpecification) {
+    if (Filters.FilterMode.and.equals(searchPaginationInput.getFilterGroup().getMode())) {
+      return customSpecification::and;
+    } else if (Filters.FilterMode.or.equals(searchPaginationInput.getFilterGroup().getMode())) {
+      return customSpecification::or;
+    } else {
+      return (Specification<T> specification) -> specification;
+    }
   }
 
 }

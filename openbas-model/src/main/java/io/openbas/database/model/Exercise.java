@@ -43,7 +43,7 @@ public class Exercise implements Base {
   @Getter
   @Column(name = "exercise_name")
   @JsonProperty("exercise_name")
-  @Queryable(searchable = true, sortable = true)
+  @Queryable(filterable = true, searchable = true, sortable = true)
   @NotBlank
   private String name;
 
@@ -56,7 +56,7 @@ public class Exercise implements Base {
   @Column(name = "exercise_status")
   @JsonProperty("exercise_status")
   @Enumerated(EnumType.STRING)
-  @Queryable(sortable = true)
+  @Queryable(filterable = true, sortable = true)
   @NotNull
   private ExerciseStatus status = ExerciseStatus.SCHEDULED;
 
@@ -77,8 +77,9 @@ public class Exercise implements Base {
 
   @Getter
   @Column(name = "exercise_severity")
+  @Enumerated(EnumType.STRING)
   @JsonProperty("exercise_severity")
-  private String severity;
+  private Scenario.SEVERITY severity;
 
   @Column(name = "exercise_pause_date")
   @JsonIgnore
@@ -86,7 +87,7 @@ public class Exercise implements Base {
 
   @Column(name = "exercise_start_date")
   @JsonProperty("exercise_start_date")
-  @Queryable(sortable = true)
+  @Queryable(filterable = true, sortable = true)
   private Instant start;
 
   @Column(name = "exercise_end_date")
@@ -160,6 +161,7 @@ public class Exercise implements Base {
   @Column(name = "exercise_updated_at")
   @JsonProperty("exercise_updated_at")
   @NotNull
+  @Queryable(filterable = true)
   private Instant updatedAt = now();
 
   // -- RELATION --
