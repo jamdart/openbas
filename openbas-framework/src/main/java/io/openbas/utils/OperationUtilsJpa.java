@@ -124,33 +124,42 @@ public class OperationUtilsJpa {
 
   // -- NOT START WITH --
 
-  public static Predicate notStartWithTexts(Expression<String> paths, CriteriaBuilder cb, List<String> texts) {
+  public static Predicate notStartWithTexts(Expression<String> paths, CriteriaBuilder cb, List<String> texts, Class<?> type) {
     if (isEmpty(texts)) {
       return cb.conjunction();
     }
 
-    Predicate[] predicates = texts.stream().map(text -> notStartWithText(paths, cb, text)).toArray(Predicate[]::new);
+    Predicate[] predicates = texts.stream().map(text -> notStartWithText(paths, cb, text, type)).toArray(Predicate[]::new);
 
     return cb.or(predicates);
   }
 
-  public static Predicate notStartWithText(Expression<String> paths, CriteriaBuilder cb, String text) {
-    return startWithText(paths, cb, text).not();
+  public static Predicate notStartWithText(Expression<String> paths, CriteriaBuilder cb, String text, Class<?> type) {
+    return startWithText(paths, cb, text, type).not();
   }
 
   // -- START WITH --
 
-  public static Predicate startWithTexts(Expression<String> paths, CriteriaBuilder cb, List<String> texts) {
+  public static Predicate startWithTexts(Expression<String> paths, CriteriaBuilder cb, List<String> texts, Class<?> type) {
     if (isEmpty(texts)) {
       return cb.conjunction();
     }
 
-    Predicate[] predicates = texts.stream().map(text -> startWithText(paths, cb, text)).toArray(Predicate[]::new);
+    Predicate[] predicates = texts.stream().map(text -> startWithText(paths, cb, text, type)).toArray(Predicate[]::new);
 
     return cb.or(predicates);
   }
 
-  public static Predicate startWithText(Expression<String> paths, CriteriaBuilder cb, String text) {
+  public static Predicate startWithText(Expression<String> paths, CriteriaBuilder cb, String text, Class<?> type) {
+    if (text == null) {
+      return cb.conjunction();
+    }
+
+    if (type.isAssignableFrom(Map.class) || type.getName().contains("ImmutableCollections")) {
+      Expression<String> values = lower(arrayToString(avals(paths, cb), cb), cb);
+      return cb.like(cb.lower(values), text.toLowerCase() + "%");
+    }
+
     return cb.like(cb.lower(paths), text.toLowerCase() + "%");
   }
 

@@ -17,6 +17,7 @@ import FilterAutocomplete, { OptionPropertySchema } from '../filter/FilterAutoco
 import useFilterableProperties from '../filter/useFilterableProperties';
 import FilterChips from '../filter/FilterChips';
 import FilterModeChip from '../filter/FilterModeChip';
+import InjectorContractSwitchFilter from '../../../../admin/components/common/filters/InjectorContractSwitchFilter';
 
 const useStyles = makeStyles(() => ({
   parameters: {
@@ -141,6 +142,11 @@ const PaginationComponentV2 = <T extends object>({
                 <MitreFilter helpers={queryableHelpers.filterHelpers} onClick={() => setOpenMitreFilter(false)} />
               </Drawer>
             </>
+          )}
+          {queryableHelpers.filterHelpers && availableFilterNames?.includes('injector_contract_players') && (
+            <div style={{ marginLeft: 10 }}>
+              <InjectorContractSwitchFilter filterHelpers={queryableHelpers.filterHelpers}/>
+            </div>
           )}
         </div>
         {!disablePagination && (
