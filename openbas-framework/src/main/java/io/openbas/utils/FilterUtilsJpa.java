@@ -140,9 +140,9 @@ public class FilterUtilsJpa {
     } else if (operator.equals(FilterOperator.contains)) {
       return (Expression<U> paths, List<String> texts) -> containsTexts((Expression<String>) paths, cb, texts, type);
     } else if (operator.equals(FilterOperator.not_starts_with)) {
-      return (Expression<U> paths, List<String> texts) -> notStartWithTexts((Expression<String>) paths, cb, texts);
+      return (Expression<U> paths, List<String> texts) -> notStartWithTexts((Expression<String>) paths, cb, texts, type);
     } else if (operator.equals(FilterOperator.starts_with)) {
-      return (Expression<U> paths, List<String> texts) -> startWithTexts((Expression<String>) paths, cb, texts);
+      return (Expression<U> paths, List<String> texts) -> startWithTexts((Expression<String>) paths, cb, texts, type);
     } else if (operator.equals(FilterOperator.empty)) {
       return (Expression<U> paths, List<String> texts) -> empty((Expression<String>) paths, cb, type);
     } else if (operator.equals(FilterOperator.not_empty)) {
