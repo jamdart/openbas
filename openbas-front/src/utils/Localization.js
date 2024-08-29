@@ -1208,6 +1208,10 @@ const i18n = {
       'Do you want to test these {count} injects?':
         'Souhaitez-vous tester ces {count} stimulis?',
       'Only SMS and emails related injects with teams defined will be tested': 'Uniquement les stimulis de types email et SMS avec des équipes définies seront testés',
+      'Do you want to delete this test?': 'Souhaitez-vous supprimer ce test?',
+      'Do you want to replay this test?': 'Souhaitez-vous rejouer ce test?',
+      'Replay all the tests': 'Rejouer tous les tests',
+      'Do you want to replay all these tests?': 'Souhaitez-vous rejouer tous ces tests?',
       'Do you want to delete this XLS mapper ?': 'Voulez-vous supprimer ce mappage XLS ?',
       Expectation_name: 'Nom de l\'attendu',
       Expectation_description: 'Description de l\'attendu',

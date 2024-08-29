@@ -113,4 +113,8 @@ public class InjectTestStatusService {
     return injectTestStatusRepository.findById(testId).orElseThrow();
   }
 
+  public void deleteInjectTest(String testId) {
+    injectTestStatusRepository.deleteById(testId);
+  }
+
 }

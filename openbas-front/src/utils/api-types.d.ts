@@ -1371,6 +1371,7 @@ export interface InjectTeamsInput {
 }
 
 export interface InjectTestStatus {
+  inject_id?: string;
   /** @format date-time */
   inject_test_status_created_at?: string;
   /** @format date-time */
@@ -2035,6 +2036,25 @@ export interface PageGroup {
 
 export interface PageInjectResultDTO {
   content?: InjectResultDTO[];
+  empty?: boolean;
+  first?: boolean;
+  last?: boolean;
+  /** @format int32 */
+  number?: number;
+  /** @format int32 */
+  numberOfElements?: number;
+  pageable?: PageableObject;
+  /** @format int32 */
+  size?: number;
+  sort?: SortObject[];
+  /** @format int64 */
+  totalElements?: number;
+  /** @format int32 */
+  totalPages?: number;
+}
+
+export interface PageInjectTestStatus {
+  content?: InjectTestStatus[];
   empty?: boolean;
   first?: boolean;
   last?: boolean;
